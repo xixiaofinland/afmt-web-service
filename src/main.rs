@@ -1,10 +1,11 @@
 use axum::{routing::post, Json, Router};
 use serde::{Deserialize, Serialize};
-use std::process::Command;
-use tempfile::NamedTempFile;
+use std::env;
 use std::io::Write;
 use std::net::SocketAddr;
-use std::env;
+use std::process::Command;
+use tempfile::NamedTempFile;
+use tower_http::cors::CorsLayer;
 
 #[derive(Deserialize)]
 struct FormatRequest {
@@ -34,7 +35,10 @@ async fn format_code(Json(request): Json<FormatRequest>) -> Json<FormatResponse>
 
 #[tokio::main]
 async fn main() {
-    let app = Router::new().route("/format", post(format_code));
+    let app = Router::new()
+        .route("/format", post(format_code))
+        .layer(CorsLayer::permissive());
+
     let port = env::var("PORT").unwrap_or_else(|_| "3000".to_string());
     let addr = SocketAddr::from(([0, 0, 0, 0], port.parse().unwrap()));
 
@@ -43,4 +47,3 @@ async fn main() {
         .await
         .unwrap();
 }
-
