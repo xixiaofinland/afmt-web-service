@@ -36,7 +36,6 @@ async fn main() {
     let app = Router::new().route("/format", post(format_code));
     let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
 
-    // Corrected way to bind the server
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
     axum::serve(listener, app.into_make_service())
         .await
