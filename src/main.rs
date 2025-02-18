@@ -4,6 +4,7 @@ use std::process::Command;
 use tempfile::NamedTempFile;
 use std::io::Write;
 use std::net::SocketAddr;
+use std::env;
 
 #[derive(Deserialize)]
 struct FormatRequest {
@@ -34,7 +35,8 @@ async fn format_code(Json(request): Json<FormatRequest>) -> Json<FormatResponse>
 #[tokio::main]
 async fn main() {
     let app = Router::new().route("/format", post(format_code));
-    let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
+    let port = env::var("PORT").unwrap_or_else(|_| "3000".to_string());
+    let addr = SocketAddr::from(([0, 0, 0, 0], port.parse().unwrap()));
 
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
     axum::serve(listener, app.into_make_service())
