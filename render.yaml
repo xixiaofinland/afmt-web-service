@@ -3,12 +3,7 @@ services:
     name: afmt-web-service
     runtime: rust
     buildCommand: |
-      rm ./afmt -rf
-      LATEST_VERSION=$(curl -s https://api.github.com/repos/xixiaofinland/afmt/releases/latest | jq -r '.tag_name')
-      curl -L -o afmt.tar.gz https://github.com/xixiaofinland/afmt/releases/download/$LATEST_VERSION/afmt-$LATEST_VERSION-linux-x86_64.tar.gz
-      tar -xf afmt.tar.gz
       chmod +x afmt
-      # Build the web service
       cargo build --release
     startCommand: ./target/release/afmt-web-service
     env: rust
