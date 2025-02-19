@@ -48,6 +48,23 @@
       .button-group button {
         margin-right: 10px;
       }
+      .config-group {
+        margin: 15px 0;
+        display: flex;
+        gap: 20px;
+      }
+      .config-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .config-item input {
+        width: 60px;
+        padding: 4px;
+      }
+      .config-item label {
+        font-size: 14px;
+      }
     </style>
   </head>
   <body>
@@ -59,6 +76,16 @@
       >.
     </p>
     <br />
+    <div class="config-group">
+      <div class="config-item">
+        <label for="max-width">Maximum line width:</label>
+        <input type="number" id="max-width" value="80" min="40" max="120" />
+      </div>
+      <div class="config-item">
+        <label for="indent-size">Indentation size:</label>
+        <input type="number" id="indent-size" value="4" min="2" max="8" />
+      </div>
+    </div>
     <textarea
       id="code-input"
       placeholder="Paste your Apex code here..."
@@ -71,28 +98,49 @@
     <h2>Formatted Code:</h2>
     <pre><code id="formatted-code"></code></pre>
     <script>
-      // Load code from URL hash when page loads
+      // Load code and config from URL hash when page loads
       window.addEventListener("load", () => {
         const hash = window.location.hash;
         if (hash) {
           try {
-            const decodedCode = decodeURIComponent(hash.slice(1));
-            document.getElementById("code-input").value = decodedCode;
+            const params = new URLSearchParams(hash.slice(1));
+            const code = params.get("code");
+            const maxWidth = params.get("max_width");
+            const indentSize = params.get("indent_size");
+
+            if (code) document.getElementById("code-input").value = code;
+            if (maxWidth) document.getElementById("max-width").value = maxWidth;
+            if (indentSize)
+              document.getElementById("indent-size").value = indentSize;
           } catch (error) {
             console.error("Error decoding URL:", error);
           }
         }
       });
 
-      // Update URL hash when code changes
-      document.getElementById("code-input").addEventListener("input", (e) => {
-        const code = e.target.value;
-        if (code) {
-          window.location.hash = encodeURIComponent(code);
-        } else {
-          history.replaceState(null, null, " ");
-        }
-      });
+      // Update URL hash when code or config changes
+      function updateHash() {
+        const code = document.getElementById("code-input").value;
+        const maxWidth = document.getElementById("max-width").value;
+        const indentSize = document.getElementById("indent-size").value;
+
+        const params = new URLSearchParams();
+        if (code) params.set("code", code);
+        params.set("max_width", maxWidth);
+        params.set("indent_size", indentSize);
+
+        window.location.hash = params.toString();
+      }
+
+      document
+        .getElementById("code-input")
+        .addEventListener("input", updateHash);
+      document
+        .getElementById("max-width")
+        .addEventListener("change", updateHash);
+      document
+        .getElementById("indent-size")
+        .addEventListener("change", updateHash);
 
       async function formatCode() {
         const button = document.getElementById("format-button");
@@ -105,12 +153,21 @@
 
         try {
           const code = document.getElementById("code-input").value;
+          const maxWidth = parseInt(document.getElementById("max-width").value);
+          const indentSize = parseInt(
+            document.getElementById("indent-size").value,
+          );
+
           const response = await fetch(
             "https://afmt-web-service-xixiaofinland463-83fq5inw.leapcell.dev/format",
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ code }),
+              body: JSON.stringify({
+                code,
+                max_width: maxWidth,
+                indent_size: indentSize,
+              }),
             },
           );
           const result = await response.json();
