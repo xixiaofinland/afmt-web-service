@@ -27,7 +27,7 @@ async fn format_code(Json(request): Json<FormatRequest>) -> Json<FormatResponse>
 
     // Create a temporary configuration file
     let config_content = format!(
-        "# .afmt.toml - Configuration for afmt\n\n# Maximum line width\nmax_width = {}\n\n# Indentation size in spaces\nindent_size = {}\n",
+        "max_width = {}\nindent_size = {}\n",
         request.max_width, request.indent_size
     );
     let mut config_file = NamedTempFile::new().expect("Failed to create temporary config file");
