@@ -34,7 +34,8 @@
   <script>
     async function formatCode() {
       const code = document.getElementById('code-input').value;
-      const response = await fetch('https://afmt-web-service.onrender.com/format', {
+      const response = await
+        fetch('https://afmt-web-service-xixiaofinland463-83fq5inw.leapcell.dev/format', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code }),
