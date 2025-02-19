@@ -1,48 +1,59 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Apex Formatter</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-    }
-    textarea {
-      width: 100%;
-      height: 200px;
-      font-family: monospace;
-    }
-    pre {
-      background: #f4f4f4;
-      padding: 10px;
-      border: 1px solid #ddd;
-    }
-  </style>
-</head>
-<body>
-  <h1>afmt playground</h1>
-  <p>If you find problems, please open an issue <a
-    href="https://github.com/xixiaofinland/afmt/issues">here</a>.</p>
-  <br>
-  <textarea id="code-input" placeholder="Paste your Apex code here..."></textarea><br>
-  <button onclick="formatCode()">Format Code</button>
-  <h2>Formatted Code:</h2>
-  <pre><code id="formatted-code"></code></pre>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Apex Formatter</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      textarea {
+        width: 100%;
+        height: 200px;
+        font-family: monospace;
+      }
+      pre {
+        background: #f4f4f4;
+        padding: 10px;
+        border: 1px solid #ddd;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>afmt playground</h1>
+    <p>
+      If you find problems, please open an issue
+      <a href="https://github.com/xixiaofinland/afmt/issues" target="_blank"
+        >here</a
+      >.
+    </p>
+    <br />
+    <textarea
+      id="code-input"
+      placeholder="Paste your Apex code here..."
+    ></textarea
+    ><br />
+    <button onclick="formatCode()">Format Code</button>
+    <h2>Formatted Code:</h2>
+    <pre><code id="formatted-code"></code></pre>
 
-  <script>
-    async function formatCode() {
-      const code = document.getElementById('code-input').value;
-      const response = await
-        fetch('https://afmt-web-service-xixiaofinland463-83fq5inw.leapcell.dev/format', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code }),
-      });
-      const result = await response.json();
-      document.getElementById('formatted-code').innerText = result.formatted_code;
-    }
-  </script>
-</body>
+    <script>
+      async function formatCode() {
+        const code = document.getElementById("code-input").value;
+        const response = await fetch(
+          "https://afmt-web-service-xixiaofinland463-83fq5inw.leapcell.dev/format",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ code }),
+          },
+        );
+        const result = await response.json();
+        document.getElementById("formatted-code").innerText =
+          result.formatted_code;
+      }
+    </script>
+  </body>
 </html>
