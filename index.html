@@ -19,6 +19,29 @@
         padding: 10px;
         border: 1px solid #ddd;
       }
+      .spinner {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 2px solid #f3f3f3;
+        border-top: 2px solid #3498db;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-left: 8px;
+        vertical-align: middle;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      button:disabled {
+        cursor: not-allowed;
+        opacity: 0.7;
+      }
     </style>
   </head>
   <body>
@@ -35,24 +58,41 @@
       placeholder="Paste your Apex code here..."
     ></textarea
     ><br />
-    <button onclick="formatCode()">Format Code</button>
+    <button onclick="formatCode()" id="format-button">Format Code</button>
     <h2>Formatted Code:</h2>
     <pre><code id="formatted-code"></code></pre>
-
     <script>
       async function formatCode() {
-        const code = document.getElementById("code-input").value;
-        const response = await fetch(
-          "https://afmt-web-service-xixiaofinland463-83fq5inw.leapcell.dev/format",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ code }),
-          },
-        );
-        const result = await response.json();
-        document.getElementById("formatted-code").innerText =
-          result.formatted_code;
+        const button = document.getElementById("format-button");
+
+        // Disable button and add spinner
+        button.disabled = true;
+        const spinner = document.createElement("span");
+        spinner.className = "spinner";
+        button.appendChild(spinner);
+
+        try {
+          const code = document.getElementById("code-input").value;
+          const response = await fetch(
+            "https://afmt-web-service-xixiaofinland463-83fq5inw.leapcell.dev/format",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ code }),
+            },
+          );
+          const result = await response.json();
+          document.getElementById("formatted-code").innerText =
+            result.formatted_code;
+        } catch (error) {
+          console.error("Error formatting code:", error);
+          document.getElementById("formatted-code").innerText =
+            "Error formatting code. Please try again.";
+        } finally {
+          // Re-enable button and remove spinner
+          button.disabled = false;
+          button.removeChild(spinner);
+        }
       }
     </script>
   </body>
