@@ -42,6 +42,12 @@
         cursor: not-allowed;
         opacity: 0.7;
       }
+      .button-group {
+        margin: 10px 0;
+      }
+      .button-group button {
+        margin-right: 10px;
+      }
     </style>
   </head>
   <body>
@@ -58,10 +64,36 @@
       placeholder="Paste your Apex code here..."
     ></textarea
     ><br />
-    <button onclick="formatCode()" id="format-button">Format Code</button>
+    <div class="button-group">
+      <button onclick="formatCode()" id="format-button">Format Code</button>
+      <button onclick="copyLink()" id="copy-link-button">Copy Link</button>
+    </div>
     <h2>Formatted Code:</h2>
     <pre><code id="formatted-code"></code></pre>
     <script>
+      // Load code from URL hash when page loads
+      window.addEventListener("load", () => {
+        const hash = window.location.hash;
+        if (hash) {
+          try {
+            const decodedCode = decodeURIComponent(hash.slice(1));
+            document.getElementById("code-input").value = decodedCode;
+          } catch (error) {
+            console.error("Error decoding URL:", error);
+          }
+        }
+      });
+
+      // Update URL hash when code changes
+      document.getElementById("code-input").addEventListener("input", (e) => {
+        const code = e.target.value;
+        if (code) {
+          window.location.hash = encodeURIComponent(code);
+        } else {
+          history.replaceState(null, null, " ");
+        }
+      });
+
       async function formatCode() {
         const button = document.getElementById("format-button");
 
@@ -93,6 +125,18 @@
           button.disabled = false;
           button.removeChild(spinner);
         }
+      }
+
+      function copyLink() {
+        const url = window.location.href;
+        navigator.clipboard.writeText(url).then(() => {
+          const copyButton = document.getElementById("copy-link-button");
+          const originalText = copyButton.textContent;
+          copyButton.textContent = "Copied!";
+          setTimeout(() => {
+            copyButton.textContent = originalText;
+          }, 2000);
+        });
       }
     </script>
   </body>
